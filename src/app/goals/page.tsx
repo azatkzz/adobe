@@ -3,9 +3,7 @@
 import { AppLayout } from "@/components/layouts/app-layout"
 import { ModernCard } from "@/components/ui/modern-card"
 import { 
-  Trophy,
   Target,
-  TrendingUp,
   CheckCircle2,
   Clock,
   Plus,
@@ -98,7 +96,7 @@ export default function GoalsPage() {
           <ModernCard className="bg-gradient-to-br from-yellow-500/20 to-yellow-500/5">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-xl bg-yellow-500/20">
-                <Trophy className="w-6 h-6 text-yellow-400" />
+                <Target className="w-6 h-6 text-yellow-400" />
               </div>
               <div>
                 <h3 className="text-sm text-white/60">Points Earned</h3>
@@ -160,7 +158,7 @@ export default function GoalsPage() {
                       <span>{goal.deadline}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Trophy className="w-4 h-4 text-yellow-400" />
+                      <Target className="w-4 h-4 text-yellow-400" />
                       <span>{goal.points} points</span>
                     </div>
                     <span className="px-2 py-1 rounded-full bg-white/5 text-xs">

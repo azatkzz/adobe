@@ -3,16 +3,15 @@
 import { AppLayout } from "@/components/layouts/app-layout"
 import { ModernCard } from "@/components/ui/modern-card"
 import { 
-  Search,
-  Trophy,
-  Star,
-  Gift,
-  Coffee,
   ShoppingBag,
+  Star,
+  Search,
+  Filter,
+  Gift,
+  Trophy,
   Ticket,
   Sparkles,
-  Filter,
-  ChevronRight
+  Coffee
 } from "lucide-react"
 import { useState } from "react"
 

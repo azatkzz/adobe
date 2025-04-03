@@ -2,21 +2,18 @@
 
 import { ModernCard } from "@/components/ui/modern-card"
 import { 
-  Calendar,
   Clock, 
   Brain,
-  Sparkles,
-  Wind,
-  Waves,
-  TreePine,
-  Coffee,
   ChevronRight,
   PlayCircle,
-  Timer
+  Timer,
+  Sun,
+  Moon
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { useState } from "react"
 import { MeditationPlayer } from "@/components/meditation/meditation-player"
+import type { Meditation } from "@/types/meditation"
 
 // Mock calendar data
 const schedule = [
@@ -43,45 +40,37 @@ const schedule = [
   }
 ]
 
-// Meditation suggestions based on break duration
-const meditationSuggestions = [
+// Update meditation data to use string IDs
+const meditations: Meditation[] = [
   {
-    id: 1,
-    title: "Quick Refresh",
-    duration: "5 min",
-    emoji: "🌟",
-    description: "Perfect for short breaks",
-    theme: "Energy",
-    icon: Sparkles,
-    gradient: "from-yellow-500/20 to-orange-500/20",
-    iconColor: "text-yellow-400"
-  },
-  {
-    id: 2,
-    title: "Calm Mind",
+    id: "1", // Changed from number to string
+    title: "Morning Mindfulness",
     duration: "10 min",
-    emoji: "🌊",
-    description: "Reduce stress and anxiety",
-    theme: "Peace",
-    icon: Waves,
-    gradient: "from-blue-500/20 to-cyan-500/20",
-    iconColor: "text-blue-400"
+    emoji: "🌅",
+    description: "Start your day with clarity and purpose",
+    theme: "morning",
+    icon: Sun,
+    gradient: "from-orange-500/10 to-yellow-500/10",
+    iconColor: "text-orange-400",
+    audioUrl: "/meditations/morning.mp3" // Optional audio URL
   },
   {
-    id: 3,
-    title: "Forest Bath",
+    id: "2", // Changed from number to string
+    title: "Evening Relaxation",
     duration: "15 min",
-    emoji: "🌲",
-    description: "Deep relaxation session",
-    theme: "Nature",
-    icon: TreePine,
-    gradient: "from-green-500/20 to-emerald-500/20",
-    iconColor: "text-green-400"
+    emoji: "🌙",
+    description: "Unwind and prepare for restful sleep",
+    theme: "evening",
+    icon: Moon,
+    gradient: "from-indigo-500/10 to-purple-500/10",
+    iconColor: "text-indigo-400",
+    audioUrl: "/meditations/evening.mp3"
   }
+  // ... other meditations
 ]
 
 export function WellnessSection() {
-  const [selectedMeditation, setSelectedMeditation] = useState<typeof meditationSuggestions[0] | null>(null)
+  const [selectedMeditation, setSelectedMeditation] = useState<Meditation | null>(null)
 
   // In a real app, this would be calculated from actual calendar data
   const nextBreak = {
@@ -164,7 +153,7 @@ export function WellnessSection() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {meditationSuggestions.map((meditation) => (
+          {meditations.map((meditation) => (
             <ModernCard
               key={meditation.id}
               interactive

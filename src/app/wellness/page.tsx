@@ -5,61 +5,65 @@ import { ModernCard } from "@/components/ui/modern-card"
 import { MoodTracker } from "@/components/wellness/mood-tracker"
 import { 
   Brain,
-  Heart,
-  Flower2,
-  Moon,
   Sun,
+  Moon,
   Wind,
-  Music,
+  Heart,
   Timer,
   PlayCircle
 } from "lucide-react"
 import { useState } from "react"
+import { MeditationPlayer } from "@/components/wellness/meditation-player"
+import type { Meditation } from "@/types/meditation"
 
-const meditations = [
+const meditations: Meditation[] = [
   {
-    id: 1,
-    title: "Morning Focus",
+    id: "1",
+    title: "Morning Mindfulness",
     duration: "10 min",
-    category: "Focus",
-    icon: Sun,
+    emoji: "🌅",
     description: "Start your day with clarity and purpose",
-    color: "from-yellow-500/20 to-orange-500/20",
-    iconColor: "text-yellow-500",
-    audio: "/meditations/morning-focus.mp3"
+    theme: "morning",
+    icon: Sun,
+    gradient: "from-orange-500/10 to-yellow-500/10",
+    iconColor: "text-orange-400",
+    audioUrl: "/meditations/morning.mp3"
   },
   {
-    id: 2,
-    title: "Midday Reset",
-    duration: "5 min",
-    category: "Break",
-    icon: Flower2,
-    description: "Quick reset between meetings",
-    color: "from-green-500/20 to-emerald-500/20",
-    iconColor: "text-green-500",
-    audio: "/meditations/midday-reset.mp3"
-  },
-  {
-    id: 3,
-    title: "Deep Work",
+    id: "2",
+    title: "Evening Relaxation",
     duration: "15 min",
-    category: "Focus",
-    icon: Brain,
-    description: "Enhance concentration and productivity",
-    color: "from-blue-500/20 to-indigo-500/20",
-    iconColor: "text-blue-500",
-    audio: "/meditations/deep-work.mp3"
+    emoji: "��",
+    description: "Unwind and prepare for restful sleep",
+    theme: "evening",
+    icon: Moon,
+    gradient: "from-indigo-500/10 to-purple-500/10",
+    iconColor: "text-indigo-400",
+    audioUrl: "/meditations/evening.mp3"
   },
   {
-    id: 4,
-    title: "Evening Wind Down",
-    duration: "10 min",
-    category: "Relax",
-    icon: Moon,
-    description: "Transition from work to personal time",
-    color: "from-purple-500/20 to-pink-500/20",
-    iconColor: "text-purple-500",
-    audio: "/meditations/evening-wind-down.mp3"
+    id: "3",
+    title: "Stress Relief",
+    duration: "8 min",
+    emoji: "🍃",
+    description: "Quick stress relief session",
+    theme: "stress",
+    icon: Wind,
+    gradient: "from-green-500/10 to-emerald-500/10",
+    iconColor: "text-green-400",
+    audioUrl: "/meditations/stress.mp3"
+  },
+  {
+    id: "4",
+    title: "Loving Kindness",
+    duration: "12 min",
+    emoji: "💝",
+    description: "Cultivate compassion and kindness",
+    theme: "compassion",
+    icon: Heart,
+    gradient: "from-pink-500/10 to-rose-500/10",
+    iconColor: "text-pink-400",
+    audioUrl: "/meditations/kindness.mp3"
   }
 ]
 
@@ -88,7 +92,7 @@ const wellnessStats = [
 ]
 
 export default function WellnessPage() {
-  const [selectedMeditation, setSelectedMeditation] = useState<typeof meditations[0] | null>(null)
+  const [selectedMeditation, setSelectedMeditation] = useState<Meditation | null>(null)
 
   return (
     <AppLayout>
@@ -160,7 +164,7 @@ export default function WellnessPage() {
                 onClick={() => setSelectedMeditation(meditation)}
               >
                 <div className="space-y-4">
-                  <div className={`h-24 -mx-5 -mt-5 rounded-t-xl bg-gradient-to-br ${meditation.color}
+                  <div className={`h-24 -mx-5 -mt-5 rounded-t-xl bg-gradient-to-br ${meditation.gradient}
                     flex items-center justify-center`}>
                     <meditation.icon className={`w-8 h-8 ${meditation.iconColor}`} />
                   </div>
@@ -199,60 +203,10 @@ export default function WellnessPage() {
 
       {/* Meditation Player Modal */}
       {selectedMeditation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <ModernCard className="w-full max-w-lg">
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-semibold text-white">
-                    {selectedMeditation.title}
-                  </h3>
-                  <p className="text-white/60">
-                    {selectedMeditation.description}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setSelectedMeditation(null)}
-                  className="p-2 rounded-full hover:bg-white/5"
-                >
-                  <Wind className="w-5 h-5 text-white/60" />
-                </button>
-              </div>
-
-              <div className="flex justify-center">
-                <button className="w-20 h-20 rounded-full bg-primary/10 hover:bg-primary/20 
-                  flex items-center justify-center transition-colors">
-                  <PlayCircle className="w-12 h-12 text-primary" />
-                </button>
-              </div>
-
-              <div className="space-y-2">
-                <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full w-0 bg-primary rounded-full" />
-                </div>
-                <div className="flex justify-between text-sm text-white/40">
-                  <span>0:00</span>
-                  <span>{selectedMeditation.duration}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <button className="p-2 rounded-full hover:bg-white/5">
-                    <Music className="w-5 h-5 text-white/60" />
-                  </button>
-                  <span className="text-white/60">Ambient Sound</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  className="w-24"
-                />
-              </div>
-            </div>
-          </ModernCard>
-        </div>
+        <MeditationPlayer
+          meditation={selectedMeditation}
+          onClose={() => setSelectedMeditation(null)}
+        />
       )}
     </AppLayout>
   )

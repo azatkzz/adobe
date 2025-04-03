@@ -11,6 +11,7 @@ interface OrderCardProps {
   onReorder?: () => void
   onEdit?: () => void
   onFavorite?: () => void
+  className?: string
 }
 
 export function OrderCard({
@@ -19,10 +20,11 @@ export function OrderCard({
   image,
   onReorder,
   onEdit,
-  onFavorite
+  onFavorite,
+  className
 }: OrderCardProps) {
   return (
-    <Card className="overflow-hidden">
+    <Card className={`overflow-hidden ${className || ''}`}>
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-lg font-medium text-white">{title}</h3>

@@ -16,8 +16,7 @@ import {
   Briefcase,
   GraduationCap,
   MapPin,
-  Mail,
-  ExternalLink
+  Mail
 } from "lucide-react"
 
 // Add profile data

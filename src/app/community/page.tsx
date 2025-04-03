@@ -17,9 +17,7 @@ import {
   Coffee,
   Gamepad2,
   Plus,
-  TrendingUp,
-  MessageCircle,
-  Calendar
+  MessageCircle
 } from "lucide-react"
 import { useState } from "react"
 
@@ -230,7 +228,7 @@ export default function CommunityPage() {
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 text-white/40 text-sm mb-1">
-                      <Calendar className="w-4 h-4" />
+                      <MessageCircle className="w-4 h-4" />
                       <span>Events</span>
                     </div>
                     <p className="text-white font-medium">{group.events}</p>

@@ -1,7 +1,7 @@
 "use client"
 
 import { ModernCard } from "@/components/ui/modern-card"
-import { Brain, Clock } from "lucide-react"
+import { Brain } from "lucide-react"
 
 interface MeditationReminderProps {
   nextMeeting: {
@@ -24,6 +24,9 @@ export function MeditationReminder({ nextMeeting, timeUntil }: MeditationReminde
           </h3>
           <p className="text-white/60 mb-4">
             You have {timeUntil} minutes before "{nextMeeting.title}"
+          </p>
+          <p className="text-white/60">
+            {`Don't forget your daily meditation session`}
           </p>
           <button className="px-4 py-2 rounded-xl bg-purple-500/10 
             hover:bg-purple-500/20 text-purple-400 text-sm">

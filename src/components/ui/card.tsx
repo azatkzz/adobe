@@ -1,50 +1,102 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { ReactNode, ButtonHTMLAttributes, HTMLAttributes } from "react"
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+// Omit children from base props since it will come from HTML attributes
+interface BaseCardProps {
   highlight?: boolean
   interactive?: boolean
-  children: React.ReactNode
+  className?: string
 }
 
+// For regular card div
+type CardDivProps = BaseCardProps & {
+  as?: "div"
+  children?: ReactNode
+} & Omit<HTMLAttributes<HTMLDivElement>, 'children'>
+
+// For button card
+type CardButtonProps = BaseCardProps & {
+  as: "button"
+  children?: ReactNode
+} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>
+
+type CardProps = CardDivProps | CardButtonProps
+
 export function Card({ 
-  highlight, 
-  interactive,
-  className, 
-  children,
-  ...props 
+  children, 
+  highlight = false, 
+  interactive = false,
+  className,
+  as = "div",
+  ...props
 }: CardProps) {
+  // Use proper type checking to determine the component type
+  if (as === "button") {
+    return (
+      <button
+        className={cn(
+          "rounded-xl p-4",
+          "bg-surface border border-surface",
+          highlight && "border-primary/50",
+          interactive && "hover:border-primary/50 cursor-pointer transition-colors",
+          className
+        )}
+        {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}
+      >
+        {children}
+      </button>
+    )
+  }
+
   return (
     <div
       className={cn(
-        "bg-surface/80 backdrop-blur-lg rounded-xl p-4",
-        "border border-white/10",
-        highlight && "bg-white/10",
-        interactive && "hover:bg-white/15 cursor-pointer transition-all duration-200",
+        "rounded-xl p-4",
+        "bg-surface border border-surface",
+        highlight && "border-primary/50",
+        interactive && "hover:border-primary/50 cursor-pointer transition-colors",
         className
       )}
-      {...props}
+      {...(props as HTMLAttributes<HTMLDivElement>)}
     >
       {children}
     </div>
   )
 }
 
-export function CardAction({ children, className, ...props }: CardProps) {
+export function CardAction({ 
+  children, 
+  className,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       className={cn(
         "w-full text-left",
         "bg-white/5 hover:bg-white/10",
-        "rounded-lg px-4 py-3",
-        "border border-white/10",
-        "transition-all duration-200",
+        "px-4 py-3 rounded-lg",
+        "transition-colors",
         className
       )}
       {...props}
     >
       {children}
     </button>
+  )
+}
+
+export function CardContent({ 
+  children, 
+  className 
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <div className={cn("space-y-2", className)}>
+      {children}
+    </div>
   )
 } 

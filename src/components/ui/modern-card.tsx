@@ -1,48 +1,37 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { motion, HTMLMotionProps } from "framer-motion"
 
-interface ModernCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  gradient?: boolean
+interface ModernCardProps extends Omit<HTMLMotionProps<"div">, "className"> {
+  className?: string
   interactive?: boolean
+  gradient?: boolean
   children: React.ReactNode
 }
 
 export function ModernCard({ 
-  gradient,
-  interactive,
-  className, 
+  className,
+  interactive = true,
+  gradient = false,
   children,
-  ...props 
+  ...props
 }: ModernCardProps) {
   return (
     <motion.div
       whileHover={interactive ? { scale: 1.02 } : undefined}
       whileTap={interactive ? { scale: 0.98 } : undefined}
       className={cn(
-        "relative overflow-hidden",
-        "bg-surface/90 backdrop-blur-xl",
-        "border border-white/10",
-        "rounded-2xl p-5",
+        "relative rounded-2xl bg-white/5 border border-white/10 p-6",
+        "backdrop-blur-sm shadow-lg",
+        "transition-colors duration-200",
+        "hover:bg-white/10",
         gradient && "bg-gradient-to-br from-primary/10 to-secondary/10",
-        interactive && "cursor-pointer hover:bg-surfaceHover",
-        "transition-all duration-300",
         className
       )}
       {...props}
     >
-      {/* Glow effect */}
-      {gradient && (
-        <div className="absolute inset-0 opacity-30 blur-3xl">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary" />
-        </div>
-      )}
-      
-      {/* Content */}
-      <div className="relative z-10">
-        {children}
-      </div>
+      {children}
     </motion.div>
   )
 } 

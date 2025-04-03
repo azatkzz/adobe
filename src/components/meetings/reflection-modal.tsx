@@ -3,32 +3,38 @@
 import { useState } from "react"
 import { ModernCard } from "@/components/ui/modern-card"
 import { 
-  ThumbsUp,
-  ThumbsDown,
-  MessageCircle,
-  Lightbulb,
   X,
   Smile,
   Meh,
   Frown
 } from "lucide-react"
 
+interface ReflectionData {
+  mood: 'positive' | 'negative' | 'neutral'
+  notes: string
+  insights: string[]
+}
+
 interface ReflectionModalProps {
   meetingTitle: string
   onClose: () => void
-  onSubmit: (data: any) => void
+  onSubmit: (data: ReflectionData) => void
 }
 
 export function ReflectionModal({ meetingTitle, onClose, onSubmit }: ReflectionModalProps) {
-  const [mood, setMood] = useState<'positive' | 'neutral' | 'negative'>()
+  const [mood, setMood] = useState<'positive' | 'neutral' | 'negative'>('neutral')
   const [feedback, setFeedback] = useState("")
   const [takeaways, setTakeaways] = useState("")
 
   const moods = [
-    { value: 'positive', icon: Smile, label: 'Productive' },
-    { value: 'neutral', icon: Meh, label: 'Neutral' },
-    { value: 'negative', icon: Frown, label: 'Could be better' },
+    { value: 'positive' as const, icon: Smile, label: 'Productive' },
+    { value: 'neutral' as const, icon: Meh, label: 'Neutral' },
+    { value: 'negative' as const, icon: Frown, label: 'Could be better' },
   ]
+
+  function _handleSubmit(_data: ReflectionData) {
+    // Implementation will be added later
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -59,7 +65,7 @@ export function ReflectionModal({ meetingTitle, onClose, onSubmit }: ReflectionM
               {moods.map((m) => (
                 <button
                   key={m.value}
-                  onClick={() => setMood(m.value as any)}
+                  onClick={() => setMood(m.value)}
                   className={`flex-1 flex flex-col items-center gap-2 p-4 rounded-xl border 
                     transition-colors
                     ${mood === m.value 
@@ -111,7 +117,11 @@ export function ReflectionModal({ meetingTitle, onClose, onSubmit }: ReflectionM
               Cancel
             </button>
             <button
-              onClick={() => onSubmit({ mood, feedback, takeaways })}
+              onClick={() => onSubmit({ 
+                mood, 
+                notes: feedback,
+                insights: takeaways.split('\n').filter(Boolean) 
+              })}
               className="px-4 py-2 rounded-xl bg-primary text-white"
             >
               Submit Reflection

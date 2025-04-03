@@ -2,16 +2,17 @@
 
 import { useEffect, useRef, useState } from "react"
 import createGlobe from "cobe"
-import { cn } from "@/lib/utils"
 
 interface GlobeProps {
   size?: number
   scale?: number
+  className?: string
 }
 
 export function Globe({ 
   size = 400,
-  scale = 1.5 
+  scale = 1.5,
+  className
 }: GlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const pointerInteracting = useRef<number | null>(null)
@@ -117,7 +118,7 @@ export function Globe({
 
   return (
     <div 
-      className="relative aspect-square w-full max-w-[400px] mx-auto"
+      className={`relative aspect-square w-full max-w-[400px] mx-auto ${className || ''}`}
       style={{ 
         width: size,
         height: size,

@@ -2,26 +2,20 @@
 
 import { AppLayout } from "@/components/layouts/app-layout"
 import { Header } from "@/components/navigation/header"
-import { Card, CardAction } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { 
   Coffee,
   MapPin,
   Calendar,
   Clock,
-  Bell,
-  ChevronRight,
-  Target,
-  Flame,
-  CalendarDays,
   Star,
   UserPlus,
   CheckCircle2,
   PartyPopper,
   Users,
-  Trophy,
   Utensils,
-  Heart,
-  ArrowRight
+  ArrowRight,
+  Heart
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { OfficeMap } from "@/components/ui/office-map"
@@ -31,7 +25,7 @@ import { OrderCard } from "@/components/ui/order-card"
 import { useState } from "react"
 import { ModernCard } from "@/components/ui/modern-card"
 
-const officeLocations = [
+const _officeLocations = [
   { name: "San Francisco HQ", status: "20 colleagues here", avatar: "SF" },
   { name: "New York Office", status: "12 colleagues here", avatar: "NY" },
   { name: "Tokyo Space", status: "8 colleagues here", avatar: "TK" },
@@ -179,10 +173,9 @@ export default function HomePage() {
         {/* Orders */}
         <div className="p-4 space-y-4">
           <OrderCard
-            title="Avocado Shrimp Salad"
+            title="Chicken Sandwich"
             description="No Mayo, Extra Avocado"
             image="/food.jpg"
-            className="w-10 h-10"
             onReorder={() => {}}
           />
         </div>
@@ -433,7 +426,11 @@ export default function HomePage() {
             </div>
             
             <div className="bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
-              <OfficeMap />
+              <OfficeMap locations={[
+                { id: "Creative Hub", name: "Creative Hub", coordinates: [37.7749, -122.4194], employees: 20 },
+                { id: "Adobe Café", name: "Adobe Café", coordinates: [37.7833, -122.4167], employees: 15 },
+                { id: "Wellness Center", name: "Wellness Center", coordinates: [37.7855, -122.4133], employees: 10 }
+              ]} />
             </div>
 
             {/* Privacy Notice */}

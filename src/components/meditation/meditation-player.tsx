@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { 
   Play,
   Pause,
@@ -11,22 +11,13 @@ import {
   VolumeX,
   Moon,
   Sun,
-  Timer,
   X
 } from "lucide-react"
 import { ModernCard } from "@/components/ui/modern-card"
+import type { Meditation } from "@/types/meditation"
 
 interface MeditationPlayerProps {
-  meditation: {
-    id: string
-    title: string
-    duration: string
-    theme: string
-    description: string
-    gradient: string
-    emoji: string
-    audioUrl?: string
-  }
+  meditation: Meditation
   onClose: () => void
 }
 
@@ -39,20 +30,27 @@ export function MeditationPlayer({ meditation, onClose }: MeditationPlayerProps)
   const [ambientMode, setAmbientMode] = useState<'light' | 'dark'>('dark')
   
   const audioRef = useRef<HTMLAudioElement>(null)
-  const intervalRef = useRef<NodeJS.Timeout>()
+  const intervalRef = useRef<number | null>(null)
 
   // Convert duration string to seconds
   const totalDuration = parseInt(meditation.duration) * 60
 
+  const clearCurrentInterval = () => {
+    if (intervalRef.current !== null) {
+      window.clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+  }
+
   useEffect(() => {
     if (isPlaying) {
-      intervalRef.current = setInterval(() => {
+      intervalRef.current = window.setInterval(() => {
         setCurrentTime(prev => {
           const newTime = prev + 1
           setProgress((newTime / totalDuration) * 100)
           if (newTime >= totalDuration) {
             setIsPlaying(false)
-            clearInterval(intervalRef.current)
+            clearCurrentInterval()
             return 0
           }
           return newTime
@@ -61,14 +59,26 @@ export function MeditationPlayer({ meditation, onClose }: MeditationPlayerProps)
     }
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
+      clearCurrentInterval()
     }
   }, [isPlaying, totalDuration])
 
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying)
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause()
+        clearCurrentInterval()
+      } else {
+        audioRef.current.play()
+        intervalRef.current = window.setInterval(() => {
+          if (audioRef.current) {
+            setCurrentTime(audioRef.current.currentTime)
+            setProgress((audioRef.current.currentTime / totalDuration) * 100)
+          }
+        }, 1000)
+      }
+      setIsPlaying(!isPlaying)
+    }
   }
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -218,6 +228,10 @@ export function MeditationPlayer({ meditation, onClose }: MeditationPlayerProps)
             src={meditation.audioUrl}
             loop={false}
             muted={isMuted}
+            onEnded={() => {
+              setIsPlaying(false)
+              clearCurrentInterval()
+            }}
           />
         )}
       </ModernCard>

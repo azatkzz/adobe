@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ModernCard } from "@/components/ui/modern-card"
@@ -10,10 +11,17 @@ import {
   Heart,
   Target,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  LucideIcon
 } from "lucide-react"
 
-const steps = [
+interface Step {
+  id: string;
+  title: string;
+  icon: LucideIcon;
+}
+
+const steps: Step[] = [
   {
     id: "profile",
     title: "Let's get to know you",
@@ -44,6 +52,8 @@ const steps = [
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(0)
   
+  const StepIcon = steps[currentStep].icon
+  
   return (
     <div className="min-h-screen bg-background text-white p-6">
       {/* Progress bar */}
@@ -66,9 +76,7 @@ export default function OnboardingPage() {
             <ModernCard gradient>
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                  {steps[currentStep].icon && (
-                    <steps[currentStep].icon className="w-6 h-6 text-primary" />
-                  )}
+                  <StepIcon className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h1 className="text-2xl font-semibold">

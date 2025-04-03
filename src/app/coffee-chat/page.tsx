@@ -4,18 +4,14 @@ import { AppLayout } from "@/components/layouts/app-layout"
 import { Header } from "@/components/navigation/header"
 import { ModernCard } from "@/components/ui/modern-card"
 import { 
-  Coffee, 
-  Users, 
+  Coffee,
   Calendar,
   Clock,
-  MapPin,
-  ArrowRight,
-  Sparkles,
-  Globe,
-  Building2,
   Star,
   MessageCircle,
-  BookOpen
+  BookOpen,
+  Building2,
+  Globe
 } from "lucide-react"
 import { useState } from "react"
 
