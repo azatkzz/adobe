@@ -1,33 +1,35 @@
 "use client"
 
 import { AppLayout } from "@/components/layouts/app-layout"
+import { Header } from "@/components/navigation/header"
+import { Card, CardAction } from "@/components/ui/card"
 import { 
-  Bell, 
-  Calendar, 
-  Home,
-  Search,
-  Trophy,
-  Users,
   Coffee,
+  MapPin,
+  Calendar,
+  Clock,
+  Bell,
+  ChevronRight,
   Target,
   Flame,
   CalendarDays,
   Star,
-  TrendingUp,
-  ChevronDown,
-  ArrowRight,
-  Building2,
-  MapPin,
-  Share2,
-  Clock,
-  ChevronRight,
   UserPlus,
   CheckCircle2,
-  PartyPopper
+  PartyPopper,
+  Users,
+  Trophy,
+  Utensils,
+  Heart,
+  ArrowRight
 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion"
 import { OfficeMap } from "@/components/ui/office-map"
+import { TabBar } from "@/components/ui/tab-bar"
+import { ActionButton } from "@/components/ui/action-button"
+import { OrderCard } from "@/components/ui/order-card"
+import { useState } from "react"
+import { ModernCard } from "@/components/ui/modern-card"
 
 const officeLocations = [
   { name: "San Francisco HQ", status: "20 colleagues here", avatar: "SF" },
@@ -88,166 +90,229 @@ const events = [
   }
 ]
 
-export default function LandingPage() {
-  const router = useRouter()
-  
-  // Motion values for drag gesture
-  const y = useMotionValue(0)
-  const opacity = useTransform(y, [0, 200], [1, 0])
-  const scale = useTransform(y, [0, 200], [1, 0.95])
-
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    if (info.offset.y > 200) {
-      router.push('/dashboard')
-    }
+const featuredItems = [
+  {
+    id: 1,
+    title: "Today's Special",
+    category: "Food",
+    image: "/food.jpg",
+    name: "Shrimp Avocado Salad",
+    description: "Fresh shrimp, avocado, mixed greens with citrus dressing",
+    price: "$14.99",
+    rating: 4.8,
+    prepTime: "10-12 min",
+    path: "/food"
   }
+]
 
-  const quickActions = [
-    {
-      icon: Coffee,
-      title: "Coffee Chat",
-      description: "Find a partner",
-      color: "from-blue-500 to-blue-600",
-      path: '/coffee-chat'
-    },
-    {
-      icon: Target,
-      title: "Daily Challenge",
-      description: "Start now",
-      color: "from-red-500 to-red-600",
-      path: '/goals'
-    },
-    {
-      icon: Flame,
-      title: "Interest Group",
-      description: "Join community",
-      color: "from-orange-500 to-orange-600",
-      path: '/goals'
-    },
-    {
-      icon: CalendarDays,
-      title: "Events",
-      description: "View upcoming",
-      color: "from-purple-500 to-purple-600",
-      path: '/events'
-    }
-  ]
+const quickActions = [
+  {
+    title: "Upcoming Events",
+    description: "2 events today",
+    icon: Calendar,
+    path: "/events",
+    color: "text-blue-400",
+    bgColor: "bg-blue-500/20"
+  },
+  {
+    title: "Wellness Check",
+    description: "Track your mood",
+    icon: Heart,
+    path: "/wellness",
+    color: "text-red-400",
+    bgColor: "bg-red-500/20"
+  },
+  {
+    title: "Community",
+    description: "12 new posts",
+    icon: Users,
+    path: "/community",
+    color: "text-green-400",
+    bgColor: "bg-green-500/20"
+  }
+]
+
+export default function HomePage() {
+  const router = useRouter()
+  const [activeTab, setActiveTab] = useState("recent")
 
   return (
     <AppLayout>
-      <motion.div 
-        className="relative h-full"
-        style={{ y, opacity, scale }}
-        drag="y"
-        dragConstraints={{ top: 0, bottom: 0 }}
-        dragElastic={0.7}
-        onDragEnd={handleDragEnd}
-      >
-        {/* Pull to dashboard indicator */}
-        <div className="absolute top-0 left-0 right-0 flex justify-center py-3 z-10">
-          <div className="flex items-center gap-1 text-white/40 text-sm">
-            <ChevronDown className="w-4 h-4 animate-bounce" />
-            Pull to view dashboard
+      <div className="min-h-screen bg-background">
+        <Header />
+        
+        {/* Quick Actions */}
+        <div className="px-4 py-3 flex gap-3 overflow-x-auto hide-scrollbar">
+          <ActionButton
+            icon={Coffee}
+            label="Order Food"
+            active
+          />
+          <ActionButton
+            icon={Users}
+            label="Coffee Chat"
+            onClick={() => router.push('/coffee-chat')}
+          />
+          <ActionButton
+            icon={MapPin}
+            label="Location"
+          />
+          <ActionButton
+            icon={Calendar}
+            label="Events"
+          />
+        </div>
+
+        {/* Tabs */}
+        <div className="px-4 pt-6">
+          <TabBar
+            tabs={[
+              { id: "recent", label: "Recent Orders" },
+              { id: "favorites", label: "Favorites" },
+              { id: "menu", label: "Menu" }
+            ]}
+            activeTab={activeTab}
+            onChange={setActiveTab}
+          />
+        </div>
+
+        {/* Orders */}
+        <div className="p-4 space-y-4">
+          <OrderCard
+            title="Avocado Shrimp Salad"
+            description="No Mayo, Extra Avocado"
+            image="/food.jpg"
+            className="w-10 h-10"
+            onReorder={() => {}}
+          />
+        </div>
+
+        {/* Calendar Section */}
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-textPrimary font-medium">Calendar</h2>
+            <button className="text-textSecondary text-sm">Events</button>
+          </div>
+          
+          <div className="space-y-3">
+            <Card>
+              <div className="flex items-start gap-4">
+                <div className="flex-1">
+                  <h3 className="text-textPrimary font-medium">POC UI Review</h3>
+                  <div className="mt-2 space-y-1">
+                    <div className="flex items-center gap-2 text-textSecondary text-sm">
+                      <Clock className="w-4 h-4" />
+                      <span>08:00 AM - 10:00 AM PT</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-textSecondary text-sm">
+                      <MapPin className="w-4 h-4" />
+                      <span>Virtual Meeting</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button className="px-4 py-1.5 bg-white/5 rounded-full text-textSecondary text-sm">
+                    Edit RSVP
+                  </button>
+                  <button className="px-4 py-1.5 bg-primary rounded-full text-background text-sm font-medium">
+                    Join Meeting
+                  </button>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
 
-        {/* Status Bar */}
-        <div className="h-12 bg-black/40 backdrop-blur-xl flex items-center justify-between px-6 border-b border-white/10">
-          <span className="text-white/80 text-sm font-medium">9:41</span>
-          <div className="flex items-center gap-3">
-            <Bell className="w-5 h-5 text-white/80" />
-          </div>
-        </div>
-
-        {/* Scrollable Content */}
-        <div className="absolute inset-0 top-12 bottom-16 overflow-y-auto overflow-x-hidden">
+        {/* Main Content */}
+        <div className="container mx-auto max-w-7xl px-4 py-6 lg:px-8">
           {/* Welcome Section */}
-          <section className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-red-600 to-red-900 opacity-90" />
-            <div className="relative px-6 pt-8 pb-12">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20">
-                  <span className="text-white text-lg font-medium">JI</span>
-                </div>
-                <div>
-                  <h2 className="text-white/80 text-base font-medium">Good morning,</h2>
-                  <p className="text-white text-xl font-semibold">Julia Ip</p>
-                </div>
-              </div>
-
-              {/* Stats Overview */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/10">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Star className="w-4 h-4 text-yellow-400" />
-                    <span className="text-white text-sm">Engagement</span>
-                  </div>
-                  <p className="text-2xl font-semibold text-white">92%</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/10">
-                  <div className="flex items-center gap-2 mb-2">
-                    <TrendingUp className="w-4 h-4 text-green-400" />
-                    <span className="text-white text-sm">Streak</span>
-                  </div>
-                  <p className="text-2xl font-semibold text-white">5 days</p>
-                </div>
-              </div>
-            </div>
-          </section>
+          <div>
+            <h1 className="text-2xl font-semibold text-white">Welcome Back, Sarah</h1>
+            <p className="text-white/60">Here's what's happening at Adobe today</p>
+          </div>
 
           {/* Quick Actions Grid */}
-          <section className="px-6 -mt-6">
-            <div className="grid grid-cols-2 gap-4">
-              {quickActions.map((action, index) => (
-                <button 
-                  key={index}
-                  onClick={() => router.push(action.path)}
-                  className={`group bg-black/40 backdrop-blur-xl p-5 rounded-2xl border border-white/10 hover:border-white/20 transition-all ${
-                    action.title === "Coffee Chat" ? 'relative overflow-hidden' : ''
-                  }`}
-                >
-                  {action.title === "Coffee Chat" && (
-                    <div className="absolute -top-1 -right-1 bg-blue-500 px-2 py-1 rounded-bl-lg rounded-tr-lg text-xs font-medium text-white">
-                      New
-                    </div>
-                  )}
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br ${action.color} mb-3 group-hover:scale-105 transition-transform`}>
-                    <action.icon className="w-6 h-6 text-white" />
+          <section className="grid gap-4 md:grid-cols-3 mt-8">
+            {quickActions.map((action) => (
+              <ModernCard
+                key={action.title}
+                className="group cursor-pointer"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`p-3 rounded-xl ${action.bgColor}`}>
+                    <action.icon className={`w-6 h-6 ${action.color}`} />
                   </div>
-                  <span className="text-white text-sm font-medium block mb-1">{action.title}</span>
-                  <p className="text-white/60 text-xs">{action.description}</p>
-                  {action.title === "Coffee Chat" && (
-                    <div className="mt-3 flex items-center gap-2 text-blue-400 text-xs">
-                      <span>Try it now</span>
-                      <ArrowRight className="w-3 h-3" />
+                  <div className="flex-1">
+                    <h3 className="text-white font-medium">{action.title}</h3>
+                    <p className="text-white/60 text-sm">{action.description}</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-white/20 group-hover:text-white/60 transition-colors" />
+                </div>
+              </ModernCard>
+            ))}
+          </section>
+
+          {/* Featured Content */}
+          <section className="mt-8">
+            <h2 className="text-lg font-medium text-white mb-4">Featured</h2>
+            <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+              {featuredItems.map((item) => (
+                <ModernCard
+                  key={item.id}
+                  className="group cursor-pointer overflow-hidden"
+                >
+                  <div className="space-y-3">
+                    {/* Update image container aspect ratio and size */}
+                    <div className="h-24 md:h-28 -mx-4 -mt-4 overflow-hidden relative">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="absolute inset-0 w-full h-full object-cover transform 
+                          group-hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
-                  )}
-                </button>
+
+                    {/* Content */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className="text-base font-semibold text-white">
+                          {item.name}
+                        </h3>
+                        <div className="flex items-center gap-1">
+                          <Star className="w-3.5 h-3.5 text-yellow-400" />
+                          <span className="text-white/60 text-sm">{item.rating}</span>
+                        </div>
+                      </div>
+                      <p className="text-white/60 text-sm line-clamp-2">
+                        {item.description}
+                      </p>
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                      <div className="flex items-center gap-3 text-white/60 text-xs">
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>{item.prepTime}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Utensils className="w-3.5 h-3.5" />
+                          <span>{item.category}</span>
+                        </div>
+                      </div>
+                      <span className="text-lg font-semibold bg-gradient-to-r from-primary to-secondary 
+                        bg-clip-text text-transparent">
+                        {item.price}
+                      </span>
+                    </div>
+                  </div>
+                </ModernCard>
               ))}
             </div>
           </section>
 
-          {/* Daily Challenge */}
-          <section className="px-6 mt-8">
-            <h2 className="text-lg font-semibold text-white mb-4">Daily Challenge</h2>
-            <div className="bg-black/40 backdrop-blur-xl p-5 rounded-2xl border border-white/10">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center">
-                  <Target className="w-6 h-6 text-red-500" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-white font-medium mb-2">Meet Someone New</h3>
-                  <p className="text-white/60 text-sm mb-4">Connect with a colleague from the Design team</p>
-                  <button className="bg-red-500 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-600 transition-colors">
-                    Start Challenge
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-
           {/* Events Section */}
-          <section className="px-6 mt-8 mb-8">
+          <section className="mt-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-white">Upcoming Events</h2>
               <button 
@@ -359,7 +424,7 @@ export default function LandingPage() {
           </section>
 
           {/* Map Section */}
-          <section className="px-6 mt-8 mb-8">
+          <section className="mt-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-white">Office Activity</h2>
               <button className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 text-sm transition-all">
@@ -372,7 +437,7 @@ export default function LandingPage() {
             </div>
 
             {/* Privacy Notice */}
-            <div className="mt-6 p-4 rounded-2xl bg-white/5 border border-white/10">
+            <div className="mt-4 p-4 rounded-2xl bg-white/5 border border-white/10">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
                   <MapPin className="w-5 h-5 text-purple-400" />
@@ -385,7 +450,7 @@ export default function LandingPage() {
             </div>
           </section>
         </div>
-      </motion.div>
+    </div>
     </AppLayout>
   )
 }

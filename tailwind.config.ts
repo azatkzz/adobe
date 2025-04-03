@@ -9,8 +9,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: {
+          DEFAULT: '#FF0000', // Adobe Red
+          light: '#FF4B2B',
+          dark: '#CC0000',
+        },
+        secondary: {
+          DEFAULT: '#FF4B2B', // Adobe Orange
+          light: '#FF7A59',
+          dark: '#CC3B22',
+        },
+        background: '#0F0F0F',
+        surface: '#1A1A1A',
+      },
+      screens: {
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
       },
       keyframes: {
         float: {
@@ -20,6 +37,9 @@ const config: Config = {
       },
       animation: {
         float: 'float 6s ease-in-out infinite',
+      },
+      backgroundImage: {
+        'gradient-primary': 'linear-gradient(to right, var(--primary), var(--secondary))',
       },
     },
   },

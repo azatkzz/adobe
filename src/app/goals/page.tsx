@@ -1,216 +1,178 @@
 "use client"
 
 import { AppLayout } from "@/components/layouts/app-layout"
+import { ModernCard } from "@/components/ui/modern-card"
 import { 
-  Bell,
-  Users,
-  Handshake,
-  Brain,
-  Heart,
-  Calendar,
-  Sparkles,
-  ChevronRight,
-  ArrowRight,
-  ChevronDown
+  Trophy,
+  Target,
+  TrendingUp,
+  CheckCircle2,
+  Clock,
+  Plus,
+  ChevronRight
 } from "lucide-react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion"
 
 const goals = [
   {
     id: 1,
-    icon: Users,
-    title: "Meet New People",
-    description: "Expand your network within Adobe",
-    color: "from-blue-500 to-blue-600"
+    title: "Complete Adobe XD Certification",
+    description: "Master Adobe XD and get certified",
+    progress: 75,
+    deadline: "Mar 30, 2024",
+    points: 1000,
+    category: "Learning",
+    status: "in-progress"
   },
   {
     id: 2,
-    icon: Handshake,
-    title: "Collaborate More",
-    description: "Work with different teams",
-    color: "from-purple-500 to-purple-600"
+    title: "Mentor 3 New Employees",
+    description: "Help onboard and guide new team members",
+    progress: 33,
+    deadline: "Jun 15, 2024",
+    points: 1500,
+    category: "Leadership",
+    status: "in-progress"
   },
   {
     id: 3,
-    icon: Brain,
-    title: "Develop New Skills",
-    description: "Learn and grow professionally",
-    color: "from-green-500 to-green-600"
-  },
-  {
-    id: 4,
-    icon: Heart,
-    title: "Prioritize Well-being",
-    description: "Balance work and life",
-    color: "from-red-500 to-red-600"
-  },
-  {
-    id: 5,
-    icon: Calendar,
-    title: "Attend More Events",
-    description: "Participate in Adobe activities",
-    color: "from-orange-500 to-orange-600"
+    title: "Host Design Workshop",
+    description: "Organize and conduct a design thinking workshop",
+    progress: 0,
+    deadline: "Apr 20, 2024",
+    points: 800,
+    category: "Community",
+    status: "not-started"
   }
 ]
 
-export default function GoalSettingPage() {
-  const [selectedGoals, setSelectedGoals] = useState<number[]>([])
-  const router = useRouter()
-  
-  // Motion values for drag gesture
-  const y = useMotionValue(0)
-  const opacity = useTransform(y, [0, 200], [1, 0])
-  const scale = useTransform(y, [0, 200], [1, 0.95])
+const categories = [
+  { id: "all", label: "All Goals" },
+  { id: "learning", label: "Learning" },
+  { id: "leadership", label: "Leadership" },
+  { id: "community", label: "Community" },
+  { id: "innovation", label: "Innovation" }
+]
 
-  const toggleGoal = (id: number) => {
-    setSelectedGoals(prev => 
-      prev.includes(id) 
-        ? prev.filter(goalId => goalId !== id)
-        : [...prev, id]
-    )
-  }
-
-  const handleContinue = () => {
-    if (selectedGoals.length >= 3) {
-      // Save goals and redirect to personalized dashboard
-      router.push('/')
-    }
-  }
-
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    if (info.offset.y > 200) {
-      router.push('/')
-    }
-  }
-
+export default function GoalsPage() {
   return (
     <AppLayout>
-      <motion.div 
-        className="relative h-full"
-        style={{ y, opacity, scale }}
-        drag="y"
-        dragConstraints={{ top: 0, bottom: 0 }}
-        dragElastic={0.7}
-        onDragEnd={handleDragEnd}
-      >
-        {/* Pull to go home indicator */}
-        <div className="absolute top-0 left-0 right-0 flex justify-center py-3 z-10">
-          <div className="flex items-center gap-1 text-white/40 text-sm">
-            <ChevronDown className="w-4 h-4 animate-bounce" />
-            Pull to go home
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-white">Goals</h1>
+            <p className="text-white/60">Track your progress and earn rewards</p>
           </div>
+          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white">
+            <Plus className="w-5 h-5" />
+            <span>New Goal</span>
+          </button>
         </div>
 
-        {/* Status Bar */}
-        <div className="h-12 bg-black/40 backdrop-blur-xl flex items-center justify-between px-6 border-b border-white/10">
-          <span className="text-white/80 text-sm font-medium">9:41</span>
-          <div className="flex items-center gap-3">
-            <Bell className="w-5 h-5 text-white/80" />
-          </div>
+        {/* Progress Overview */}
+        <div className="grid gap-6 md:grid-cols-3">
+          <ModernCard className="bg-gradient-to-br from-primary/20 to-primary/5">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-primary/20">
+                <Target className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-sm text-white/60">Active Goals</h3>
+                <p className="text-2xl font-semibold text-white">5</p>
+              </div>
+            </div>
+          </ModernCard>
+
+          <ModernCard className="bg-gradient-to-br from-green-500/20 to-green-500/5">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-green-500/20">
+                <CheckCircle2 className="w-6 h-6 text-green-500" />
+              </div>
+              <div>
+                <h3 className="text-sm text-white/60">Completed</h3>
+                <p className="text-2xl font-semibold text-white">12</p>
+              </div>
+            </div>
+          </ModernCard>
+
+          <ModernCard className="bg-gradient-to-br from-yellow-500/20 to-yellow-500/5">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-yellow-500/20">
+                <Trophy className="w-6 h-6 text-yellow-400" />
+              </div>
+              <div>
+                <h3 className="text-sm text-white/60">Points Earned</h3>
+                <p className="text-2xl font-semibold text-white">3,500</p>
+              </div>
+            </div>
+          </ModernCard>
         </div>
 
-        {/* Scrollable Content Container */}
-        <div className="absolute inset-0 top-12 bottom-16 overflow-y-auto overflow-x-hidden">
-          {/* Header */}
-          <div className="relative h-48 flex items-end pb-6 px-6">
-            <div className="absolute inset-0 bg-gradient-to-br from-red-600 to-red-900 opacity-90" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
-            <div className="relative">
-              <h1 className="text-2xl font-semibold text-white mb-2">Set Your Goals</h1>
-              <p className="text-white/80 text-sm">Select 3+ goals to personalize your experience</p>
-            </div>
-          </div>
+        {/* Categories */}
+        <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              className="px-6 py-2 rounded-full bg-white/5 text-white/60 
+                hover:bg-white/10 transition-colors whitespace-nowrap"
+            >
+              {category.label}
+            </button>
+          ))}
+        </div>
 
-          {/* Goals Grid */}
-          <div className="px-6 -mt-6">
-            <div className="space-y-4">
-              {goals.map((goal) => {
-                const isSelected = selectedGoals.includes(goal.id)
-                const Icon = goal.icon
-                
-                return (
-                  <button
-                    key={goal.id}
-                    onClick={() => toggleGoal(goal.id)}
-                    className={`w-full p-4 rounded-2xl border transition-all duration-300 group
-                      ${isSelected 
-                        ? 'bg-white/10 border-white/20 backdrop-blur-xl' 
-                        : 'bg-black/40 border-white/5 hover:border-white/10'}`}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br ${goal.color} transition-transform duration-300 ${isSelected ? 'scale-110' : 'group-hover:scale-105'}`}>
-                        <Icon className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1 text-left">
-                        <h3 className="text-white font-medium mb-1">{goal.title}</h3>
-                        <p className="text-white/60 text-sm">{goal.description}</p>
-                      </div>
-                      <ChevronRight className={`w-5 h-5 transition-all duration-300 ${isSelected ? 'text-white rotate-90' : 'text-white/40 group-hover:text-white/60'}`} />
-                    </div>
-                  </button>
-                )
-              })}
-            </div>
-
-            {/* AI Suggestions */}
-            <div className="mt-8 mb-6">
-              <button className="w-full p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition-all group">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center">
-                    <Sparkles className="w-5 h-5 text-yellow-500" />
+        {/* Goals List */}
+        <div className="space-y-4">
+          {goals.map((goal) => (
+            <ModernCard 
+              key={goal.id}
+              className="group cursor-pointer hover:bg-white/5 transition-colors"
+            >
+              <div className="flex items-center gap-6">
+                <div className="relative flex-shrink-0">
+                  <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center">
+                    <Target className="w-8 h-8 text-primary" />
                   </div>
-                  <div className="flex-1 text-left">
-                    <h3 className="text-white font-medium">Get AI Suggestions</h3>
-                    <p className="text-white/60 text-sm">Based on your profile</p>
+                  <div 
+                    className="absolute inset-0 rounded-full border-4 border-primary/20"
+                    style={{
+                      clipPath: `polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 ${100 - goal.progress}%)`
+                    }}
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <h3 className="text-lg font-medium text-white">
+                        {goal.title}
+                      </h3>
+                      <p className="text-white/60">
+                        {goal.description}
+                      </p>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-white/20 group-hover:text-white/60 transition-colors" />
+                  </div>
+
+                  <div className="flex items-center gap-4 text-sm text-white/60">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      <span>{goal.deadline}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Trophy className="w-4 h-4 text-yellow-400" />
+                      <span>{goal.points} points</span>
+                    </div>
+                    <span className="px-2 py-1 rounded-full bg-white/5 text-xs">
+                      {goal.category}
+                    </span>
                   </div>
                 </div>
-              </button>
-            </div>
-
-            {/* Continue Button */}
-            <button 
-              onClick={handleContinue}
-              className={`w-full py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 ${
-                selectedGoals.length >= 3
-                  ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg shadow-red-500/20 hover:from-red-600 hover:to-red-700'
-                  : 'bg-white/5 text-white/40 cursor-not-allowed'
-              }`}
-              disabled={selectedGoals.length < 3}
-            >
-              Continue
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-            {/* Progress Indicator */}
-            <div className="mt-6 mb-8">
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-white/60">{selectedGoals.length} selected</span>
-                <span className="text-white/40">3+ recommended</span>
               </div>
-              <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-red-500 to-red-600 transition-all duration-300"
-                  style={{ width: `${Math.min((selectedGoals.length / 3) * 100, 100)}%` }}
-                />
-              </div>
-            </div>
-          </div>
+            </ModernCard>
+          ))}
         </div>
-
-        {/* Navigation Bar */}
-        <nav className="absolute bottom-0 left-0 right-0 h-16 bg-black/40 backdrop-blur-xl border-t border-white/10">
-          <div className="flex justify-around items-center h-full">
-            <button className="p-2 group" onClick={() => router.push('/')}>
-              <Users className="w-6 h-6 text-white/60 group-hover:text-white group-hover:scale-110 transition-all" />
-            </button>
-            <button className="p-2 group">
-              <Sparkles className="w-6 h-6 text-red-500 group-hover:scale-110 transition-all" />
-            </button>
-          </div>
-        </nav>
-      </motion.div>
+      </div>
     </AppLayout>
   )
 } 

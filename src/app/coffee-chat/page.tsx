@@ -1,227 +1,268 @@
 "use client"
 
 import { AppLayout } from "@/components/layouts/app-layout"
+import { Header } from "@/components/navigation/header"
+import { ModernCard } from "@/components/ui/modern-card"
 import { 
-  Bell,
-  Coffee,
-  Users,
-  Home,
-  Search,
-  Trophy,
-  Globe2,
-  MapPin,
+  Coffee, 
+  Users, 
   Calendar,
   Clock,
-  Sparkles,
-  Video,
-  Building2,
+  MapPin,
   ArrowRight,
-  CalendarClock
+  Sparkles,
+  Globe,
+  Building2,
+  Star,
+  MessageCircle,
+  BookOpen
 } from "lucide-react"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
 
-type MatchMode = 'local' | 'global'
-type TimePreference = 'now' | 'today' | 'schedule'
+interface SuggestedMatch {
+  id: number
+  name: string
+  role: string
+  location: string
+  avatar: string
+  matchScore: number
+  tags: string[]
+  status: string
+}
 
-const suggestedMatches = [
+interface PreviousChat {
+  id: number
+  with: string
+  date: string
+  notes: string
+  tags: string[]
+}
+
+const suggestedMatches: SuggestedMatch[] = [
   {
+    id: 1,
     name: "Alex Rivera",
     role: "Product Manager",
     location: "San Francisco",
-    interests: ["Design Systems", "User Research", "Coffee Enthusiast"],
     avatar: "AR",
-    matchScore: 92
+    matchScore: 92,
+    tags: ["Design Systems", "User Research", "Coffee Enthusiast"],
+    status: "Free Now"
   },
   {
-    name: "Emma Chen",
-    role: "Visual Designer",
-    location: "Singapore",
-    interests: ["UI Animation", "Typography", "Tea Culture"],
-    avatar: "EC",
-    matchScore: 88
+    id: 2,
+    name: "Sarah Chen",
+    role: "UX Designer",
+    location: "New York",
+    avatar: "SC",
+    matchScore: 88,
+    tags: ["Design Systems", "Prototyping", "Tea Lover"],
+    status: "Available Later Today"
+  }
+]
+
+const previousChats: PreviousChat[] = [
+  {
+    id: 1,
+    with: "Maria Garcia",
+    date: "March 15, 2024",
+    notes: "Discussed design system implementation and shared insights about component libraries. Follow up on Figma collaboration.",
+    tags: ["Design Systems", "Collaboration"]
+  },
+  {
+    id: 2,
+    with: "David Park",
+    date: "March 10, 2024",
+    notes: "Great conversation about user research methods. Shared some useful resources about remote user testing.",
+    tags: ["User Research", "Resources"]
   }
 ]
 
 export default function CoffeeChatPage() {
-  const router = useRouter()
-  const [matchMode, setMatchMode] = useState<MatchMode>('local')
-  const [timePreference, setTimePreference] = useState<TimePreference>('now')
-  const [isMatching, setIsMatching] = useState(false)
-
-  const handleStartMatching = () => {
-    setIsMatching(true)
-    // Simulate matching process
-    setTimeout(() => {
-      setIsMatching(false)
-    }, 2000)
-  }
+  const [matchScope, setMatchScope] = useState<'local' | 'global'>('local')
+  const [availability, setAvailability] = useState<'now' | 'later' | 'schedule'>('now')
 
   return (
     <AppLayout>
-      <>
-        {/* Status Bar */}
-        <div className="h-12 bg-black/40 backdrop-blur-xl flex items-center justify-between px-6 border-b border-white/10">
-          <span className="text-white/80 text-sm font-medium">9:41</span>
-          <div className="flex items-center gap-3">
-            <Bell className="w-5 h-5 text-white/80" />
+      <div className="min-h-screen bg-background">
+        <Header />
+        
+        <div className="container mx-auto max-w-7xl px-4 py-6 lg:px-8">
+          {/* Header Section */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-2xl font-semibold text-white">Coffee Chat Mixer</h1>
+              <p className="text-white/60 mt-1">Connect with colleagues over virtual or in-person coffee chats</p>
+            </div>
           </div>
-        </div>
 
-        {/* Scrollable Content */}
-        <div className="absolute inset-0 top-12 bottom-16 overflow-y-auto overflow-x-hidden">
-          {/* Header */}
-          <section className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-900 opacity-90" />
-            <div className="relative px-6 pt-8 pb-12">
-              <h1 className="text-2xl font-semibold text-white mb-2">Coffee Chat Mixer</h1>
-              <p className="text-white/80 text-sm">Connect with colleagues over a virtual coffee ☕</p>
-            </div>
-          </section>
+          {/* Location Toggle */}
+          <div className="bg-white/5 p-1 rounded-lg inline-flex mb-8">
+            <button 
+              className={`px-4 py-2 rounded-md flex items-center gap-2 ${
+                matchScope === 'local' ? 'bg-primary text-background' : 'text-white/60 hover:text-white'
+              }`}
+              onClick={() => setMatchScope('local')}
+            >
+              <Building2 className="w-4 h-4" />
+              Local
+            </button>
+            <button 
+              className={`px-4 py-2 rounded-md flex items-center gap-2 ${
+                matchScope === 'global' ? 'bg-primary text-background' : 'text-white/60 hover:text-white'
+              }`}
+              onClick={() => setMatchScope('global')}
+            >
+              <Globe className="w-4 h-4" />
+              Global
+            </button>
+          </div>
 
-          {/* Match Mode Selection */}
-          <section className="px-6 -mt-6">
-            <div className="bg-black/40 backdrop-blur-xl p-2 rounded-2xl border border-white/10 flex">
-              <button
-                onClick={() => setMatchMode('local')}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all ${
-                  matchMode === 'local' 
-                    ? 'bg-white/10 text-white' 
-                    : 'text-white/60 hover:text-white'
-                }`}
-              >
-                <MapPin className="w-4 h-4" />
-                <span className="text-sm font-medium">Local</span>
-              </button>
-              <button
-                onClick={() => setMatchMode('global')}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all ${
-                  matchMode === 'global' 
-                    ? 'bg-white/10 text-white' 
-                    : 'text-white/60 hover:text-white'
-                }`}
-              >
-                <Globe2 className="w-4 h-4" />
-                <span className="text-sm font-medium">Global</span>
-              </button>
-            </div>
-          </section>
-
-          {/* Time Preference */}
-          <section className="px-6 mt-6">
-            <h2 className="text-lg font-semibold text-white mb-4">When are you free?</h2>
-            <div className="space-y-3">
-              {[
-                { id: 'now', icon: Coffee, label: 'Free Now', desc: 'Start chatting immediately' },
-                { id: 'today', icon: Clock, label: 'Later Today', desc: 'Find a time in next 8 hours' },
-                { id: 'schedule', icon: Calendar, label: 'Schedule Ahead', desc: 'Plan for another day' }
-              ].map((option) => (
-                <button
-                  key={option.id}
-                  onClick={() => setTimePreference(option.id as TimePreference)}
-                  className={`w-full p-4 rounded-2xl border transition-all ${
-                    timePreference === option.id
-                      ? 'bg-white/10 border-white/20 backdrop-blur-xl'
-                      : 'bg-black/40 border-white/5 hover:border-white/10'
+          {/* When are you free section */}
+          <section className="mb-8">
+            <h2 className="text-lg font-medium text-white mb-4">When are you free?</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <ModernCard>
+                <button 
+                  className={`w-full p-4 flex items-center gap-4 ${
+                    availability === 'now' ? 'ring-2 ring-primary rounded-xl' : ''
                   }`}
+                  onClick={() => setAvailability('now')}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                      <option.icon className="w-5 h-5 text-blue-400" />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <h3 className="text-white font-medium">{option.label}</h3>
-                      <p className="text-white/60 text-sm">{option.desc}</p>
-                    </div>
+                  <div className="p-3 rounded-xl bg-blue-500/20">
+                    <Coffee className="w-6 h-6 text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-medium">Free Now</h3>
+                    <p className="text-white/60 text-sm">Start chatting immediately</p>
                   </div>
                 </button>
-              ))}
+              </ModernCard>
+
+              <ModernCard>
+                <button 
+                  className={`w-full p-4 flex items-center gap-4 ${
+                    availability === 'later' ? 'ring-2 ring-primary rounded-xl' : ''
+                  }`}
+                  onClick={() => setAvailability('later')}
+                >
+                  <div className="p-3 rounded-xl bg-purple-500/20">
+                    <Clock className="w-6 h-6 text-purple-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-medium">Later Today</h3>
+                    <p className="text-white/60 text-sm">Find a time in next 8 hours</p>
+                  </div>
+                </button>
+              </ModernCard>
+
+              <ModernCard>
+                <button 
+                  className={`w-full p-4 flex items-center gap-4 ${
+                    availability === 'schedule' ? 'ring-2 ring-primary rounded-xl' : ''
+                  }`}
+                  onClick={() => setAvailability('schedule')}
+                >
+                  <div className="p-3 rounded-xl bg-green-500/20">
+                    <Calendar className="w-6 h-6 text-green-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-medium">Schedule Ahead</h3>
+                    <p className="text-white/60 text-sm">Plan for another day</p>
+                  </div>
+                </button>
+              </ModernCard>
             </div>
           </section>
 
-          {/* AI Suggestions */}
-          <section className="px-6 mt-8">
-            <h2 className="text-lg font-semibold text-white mb-4">Suggested Matches</h2>
+          {/* Suggested Matches */}
+          <section className="mb-8">
+            <h2 className="text-lg font-medium text-white mb-4">Suggested Matches</h2>
             <div className="space-y-4">
-              {suggestedMatches.map((match, index) => (
-                <div 
-                  key={index}
-                  className="bg-black/40 backdrop-blur-xl p-4 rounded-2xl border border-white/10"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                      <span className="text-white font-medium">{match.avatar}</span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="text-white font-medium">{match.name}</h3>
-                        <div className="flex items-center gap-1">
-                          <Sparkles className="w-4 h-4 text-yellow-400" />
-                          <span className="text-white/80 text-sm">{match.matchScore}% match</span>
+              {suggestedMatches.map((match) => (
+                <ModernCard key={match.id}>
+                  <div className="p-4">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-lg font-medium text-white">
+                        {match.avatar}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="text-white font-medium flex items-center gap-2">
+                              {match.name}
+                              <span className="text-sm text-yellow-400 flex items-center gap-1">
+                                <Star className="w-3 h-3" /> {match.matchScore}% match
+                              </span>
+                            </h3>
+                            <p className="text-white/60 text-sm">{match.role} • {match.location}</p>
+                          </div>
+                          <button className="px-4 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-background text-sm font-medium transition-colors">
+                            Connect
+                          </button>
                         </div>
-                      </div>
-                      <p className="text-white/60 text-sm">{match.role}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Building2 className="w-4 h-4 text-white/40" />
-                        <span className="text-white/40 text-sm">{match.location}</span>
-                      </div>
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        {match.interests.map((interest, i) => (
-                          <span 
-                            key={i}
-                            className="px-2 py-1 rounded-lg bg-white/5 text-white/60 text-xs"
-                          >
-                            {interest}
-                          </span>
-                        ))}
+                        
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {match.tags.map((tag, i) => (
+                            <span 
+                              key={i}
+                              className="px-2 py-1 rounded-md bg-white/5 text-white/60 text-xs"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="mt-3 flex items-center gap-2 text-green-400 text-sm">
+                          <div className="w-2 h-2 rounded-full bg-green-400" />
+                          {match.status}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </ModernCard>
               ))}
             </div>
           </section>
 
-          {/* Start Button */}
-          <section className="px-6 mt-8 mb-8">
-            <button
-              onClick={handleStartMatching}
-              className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium flex items-center justify-center gap-2 hover:from-blue-600 hover:to-blue-700 transition-all"
-            >
-              {isMatching ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Finding your match...
-                </div>
-              ) : (
-                <>
-                  Start Coffee Chat
-                  <Coffee className="w-5 h-5" />
-                </>
-              )}
-            </button>
+          {/* Previous Chat Notes */}
+          <section>
+            <h2 className="text-lg font-medium text-white mb-4">Previous Chat Notes</h2>
+            <div className="space-y-4">
+              {previousChats.map((chat) => (
+                <ModernCard key={chat.id}>
+                  <div className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <MessageCircle className="w-4 h-4 text-primary" />
+                          <h3 className="text-white font-medium">Chat with {chat.with}</h3>
+                          <span className="text-white/40 text-sm">•</span>
+                          <span className="text-white/40 text-sm">{chat.date}</span>
+                        </div>
+                        <p className="text-white/60 text-sm mb-3">{chat.notes}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {chat.tags.map((tag, i) => (
+                            <span 
+                              key={i}
+                              className="px-2 py-1 rounded-md bg-white/5 text-white/60 text-xs"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <button className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+                        <BookOpen className="w-4 h-4 text-white/60" />
+                      </button>
+                    </div>
+                  </div>
+                </ModernCard>
+              ))}
+            </div>
           </section>
         </div>
-
-        {/* Navigation Bar */}
-        <nav className="absolute bottom-0 left-0 right-0 h-16 bg-black/40 backdrop-blur-xl border-t border-white/10">
-          <div className="flex justify-around items-center h-full">
-            <button className="p-2 group" onClick={() => router.push('/')}>
-              <Home className="w-6 h-6 text-white/60 group-hover:text-white group-hover:scale-110 transition-all" />
-            </button>
-            <button className="p-2 group">
-              <Search className="w-6 h-6 text-white/60 group-hover:text-white group-hover:scale-110 transition-all" />
-            </button>
-            <button className="p-2 group">
-              <Coffee className="w-6 h-6 text-blue-500 group-hover:scale-110 transition-all" />
-            </button>
-            <button className="p-2 group">
-              <Users className="w-6 h-6 text-white/60 group-hover:text-white group-hover:scale-110 transition-all" />
-            </button>
-          </div>
-        </nav>
-      </>
+      </div>
     </AppLayout>
   )
 } 

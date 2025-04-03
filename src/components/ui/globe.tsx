@@ -1,120 +1,138 @@
 "use client"
 
-import createGlobe, { COBEOptions } from "cobe"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import createGlobe from "cobe"
 import { cn } from "@/lib/utils"
 
-const GLOBE_CONFIG: COBEOptions = {
-  width: 800,
-  height: 800,
-  onRender: () => {},
-  devicePixelRatio: 2,
-  phi: 0,
-  theta: 0.3,
-  dark: 0,
-  diffuse: 0.4,
-  mapSamples: 16000,
-  mapBrightness: 1.2,
-  baseColor: [1, 1, 1],
-  markerColor: [251 / 255, 100 / 255, 21 / 255],
-  glowColor: [1, 1, 1],
-  markers: [
-    { location: [14.5995, 120.9842], size: 0.03 },
-    { location: [19.076, 72.8777], size: 0.1 },
-    { location: [23.8103, 90.4125], size: 0.05 },
-    { location: [30.0444, 31.2357], size: 0.07 },
-    { location: [39.9042, 116.4074], size: 0.08 },
-    { location: [-23.5505, -46.6333], size: 0.1 },
-    { location: [19.4326, -99.1332], size: 0.1 },
-    { location: [40.7128, -74.006], size: 0.1 },
-    { location: [34.6937, 135.5022], size: 0.05 },
-    { location: [41.0082, 28.9784], size: 0.06 },
-  ],
+interface GlobeProps {
+  size?: number
+  scale?: number
 }
 
-export function Globe({
-  className,
-  config = GLOBE_CONFIG,
-}: {
-  className?: string
-  config?: COBEOptions
-}) {
-  let phi = 0
-  let width = 0
+export function Globe({ 
+  size = 400,
+  scale = 1.5 
+}: GlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const pointerInteracting = useRef(null)
+  const pointerInteracting = useRef<number | null>(null)
   const pointerInteractionMovement = useRef(0)
-  const [r, setR] = useState(0)
-
-  const updatePointerInteraction = (value: any) => {
-    pointerInteracting.current = value
-    if (canvasRef.current) {
-      canvasRef.current.style.cursor = value ? "grabbing" : "grab"
-    }
-  }
-
-  const updateMovement = (clientX: any) => {
-    if (pointerInteracting.current !== null) {
-      const delta = clientX - pointerInteracting.current
-      pointerInteractionMovement.current = delta
-      setR(delta / 200)
-    }
-  }
-
-  const onRender = useCallback(
-    (state: Record<string, any>) => {
-      if (!pointerInteracting.current) phi += 0.005
-      state.phi = phi + r
-      state.width = width * 2
-      state.height = width * 2
-    },
-    [r],
-  )
-
-  const onResize = () => {
-    if (canvasRef.current) {
-      width = canvasRef.current.offsetWidth
-    }
-  }
+  const [rotation, setRotation] = useState(0)
 
   useEffect(() => {
-    window.addEventListener("resize", onResize)
+    let phi = 0
+    let width = 0
+    let globe: ReturnType<typeof createGlobe> | null = null
+
+    const onResize = () => {
+      if (canvasRef.current) {
+        width = canvasRef.current.offsetWidth
+      }
+    }
+    window.addEventListener('resize', onResize)
     onResize()
 
-    const globe = createGlobe(canvasRef.current!, {
-      ...config,
-      width: width * 2,
-      height: width * 2,
-      onRender,
-    })
+    if (canvasRef.current) {
+      globe = createGlobe(canvasRef.current, {
+        devicePixelRatio: 2,
+        width: width * 2,
+        height: width * 2,
+        phi: 0,
+        theta: 0.3,
+        dark: 1,
+        diffuse: 1.2,
+        mapSamples: 16000,
+        mapBrightness: 6,
+        baseColor: [0.1, 0.1, 0.1],
+        markerColor: [251 / 255, 100 / 255, 21 / 255],
+        glowColor: [1, 1, 1],
+        scale: scale,
+        offset: [0, 0],
+        markers: [
+          // Adobe offices
+          { location: [37.7749, -122.4194], size: 0.05 }, // San Francisco
+          { location: [40.7128, -74.0060], size: 0.05 },  // New York
+          { location: [51.5074, -0.1278], size: 0.05 },   // London
+          { location: [35.6762, 139.6503], size: 0.05 },  // Tokyo
+          { location: [48.8566, 2.3522], size: 0.05 },    // Paris
+          { location: [-33.8688, 151.2093], size: 0.05 }, // Sydney
+          { location: [52.5200, 13.4050], size: 0.05 },   // Berlin
+          { location: [19.0760, 72.8777], size: 0.05 },   // Mumbai
+        ],
+        onRender: (state) => {
+          // This prevents rotation while dragging
+          if (!pointerInteracting.current) {
+            phi += 0.005
+          }
+          state.phi = phi + rotation
+          state.width = width * 2
+          state.height = width * 2
+        }
+      })
+    }
 
-    setTimeout(() => (canvasRef.current!.style.opacity = "1"))
-    return () => globe.destroy()
-  }, [])
+    return () => {
+      if (globe) {
+        globe.destroy()
+      }
+      window.removeEventListener('resize', onResize)
+    }
+  }, [scale, rotation])
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    pointerInteracting.current = e.clientX - pointerInteractionMovement.current
+    if (canvasRef.current) {
+      canvasRef.current.style.cursor = 'grabbing'
+    }
+  }
+
+  const handlePointerUp = () => {
+    pointerInteracting.current = null
+    if (canvasRef.current) {
+      canvasRef.current.style.cursor = 'grab'
+    }
+  }
+
+  const handlePointerOut = () => {
+    pointerInteracting.current = null
+    if (canvasRef.current) {
+      canvasRef.current.style.cursor = 'grab'
+    }
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (pointerInteracting.current !== null) {
+      const delta = e.clientX - pointerInteracting.current
+      pointerInteractionMovement.current = delta
+      setRotation(delta / 200)
+    }
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (pointerInteracting.current !== null && e.touches[0]) {
+      const delta = e.touches[0].clientX - pointerInteracting.current
+      pointerInteractionMovement.current = delta
+      setRotation(delta / 100)
+    }
+  }
 
   return (
-    <div
-      className={cn(
-        "absolute inset-0 mx-auto aspect-[1/1] w-full max-w-[600px]",
-        className,
-      )}
+    <div 
+      className="relative aspect-square w-full max-w-[400px] mx-auto"
+      style={{ 
+        width: size,
+        height: size,
+        maxWidth: '100%',
+        aspectRatio: '1',
+      }}
     >
       <canvas
-        className={cn(
-          "size-full opacity-0 transition-opacity duration-500 [contain:layout_paint_size]",
-        )}
         ref={canvasRef}
-        onPointerDown={(e) =>
-          updatePointerInteraction(
-            e.clientX - pointerInteractionMovement.current,
-          )
-        }
-        onPointerUp={() => updatePointerInteraction(null)}
-        onPointerOut={() => updatePointerInteraction(null)}
-        onMouseMove={(e) => updateMovement(e.clientX)}
-        onTouchMove={(e) =>
-          e.touches[0] && updateMovement(e.touches[0].clientX)
-        }
+        className="h-full w-full cursor-grab"
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerOut={handlePointerOut}
+        onMouseMove={handleMouseMove}
+        onTouchMove={handleTouchMove}
       />
     </div>
   )
