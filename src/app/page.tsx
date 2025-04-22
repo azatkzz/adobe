@@ -220,7 +220,7 @@ export default function HomePage() {
         <div className="container mx-auto max-w-7xl px-4 py-6 lg:px-8">
           {/* Welcome Section */}
           <div>
-            <h1 className="text-2xl font-semibold text-white">Welcome Back, Sarah</h1>
+            <h1 className="text-2xl font-semibold text-white">Welcome Back, Vantrease</h1>
             <p className="text-white/60">Here's what's happening at Adobe today</p>
           </div>
 

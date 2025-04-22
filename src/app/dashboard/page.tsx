@@ -21,15 +21,15 @@ import {
 
 // Add profile data
 const profile = {
-  name: "Julia Ip",
+  name: "Vantrease Willson",
   role: "Product Manager",
-  avatar: "JI",
-  level: 13,
+  avatar: "VW",
+  level: 2,
   xpProgress: 82,
-  totalXP: "2450 / 3000 XP",
+  totalXP: "1000 / 3000 XP",
   education: "Minerva University",
   location: "San Francisco, CA",
-  email: "julia.ip@adobe.com",
+  email: "vantrease@adobe.com",
   bio: "Passionate about creating intuitive and delightful user experiences. Working on innovative projects at Adobe.",
   skills: ["UX Design", "Frontend Development", "User Research", "Prototyping"],
   team: "Design Systems"
@@ -38,21 +38,21 @@ const profile = {
 const stats = [
   {
     label: "XP Points",
-    value: "2,450",
+    value: "1,000",
     icon: Trophy,
     color: "text-yellow-400",
     bgColor: "bg-yellow-500/20"
   },
   {
     label: "Goals Completed",
-    value: "12",
+    value: "3",
     icon: Target,
     color: "text-green-400",
     bgColor: "bg-green-500/20"
   },
   {
     label: "Streak",
-    value: "5 days",
+    value: "2 days",
     icon: TrendingUp,
     color: "text-blue-400",
     bgColor: "bg-blue-500/20"
